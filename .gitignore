@@ -11,10 +11,13 @@
 !/tools/Cargo.toml
 !/tools/LICENSE
 !/tools/src/**/*.rs
+!/tools/src/*.html
 !/splash/*.svg
 !/splash/*.png
 !/splash/*.json
 !/splash/*.html
+!/splash/frames/*.png
+!/splash/frames/*.json
 !/logos/*.svg
 
 /target/

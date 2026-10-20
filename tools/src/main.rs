@@ -7,6 +7,7 @@ use std::path::{Component, Path, PathBuf};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 type Assets = Vec<(PathBuf, Vec<u8>)>;
+mod raster;
 
 fn main() -> std::process::ExitCode {
     match run() {
@@ -56,7 +57,16 @@ fn run() -> Result<()> {
             export(&assets, Path::new(&arguments[2]))?;
             println!("Exported {} files to {}", assets.len(), arguments[2]);
         }
-        _ => return Err("usage: brand-assets validate [ROOT] | export OUTPUT [ROOT]".into()),
+        Some("bake") if (3..=4).contains(&arguments.len()) => {
+            let root = arguments.get(3).map_or(Path::new("."), Path::new);
+            raster::bake(root, Path::new(&arguments[2]))?;
+        }
+        _ => {
+            return Err(
+                "usage: brand-assets validate [ROOT] | export OUTPUT [ROOT] | bake OUTPUT [ROOT]"
+                    .into(),
+            );
+        }
     }
     Ok(())
 }
@@ -83,7 +93,7 @@ fn read_asset(root: &Path, relative: &Path) -> Result<Vec<u8>> {
     Ok(bytes)
 }
 
-fn validate(root: &Path) -> Result<Assets> {
+fn validate_source(root: &Path) -> Result<Assets> {
     let root = root.canonicalize()?;
     let manifest_bytes = read_asset(&root, Path::new("splash/manifest.json"))?;
     let manifest: Manifest = serde_json::from_slice(&manifest_bytes)?;
@@ -154,6 +164,12 @@ fn validate(root: &Path) -> Result<Assets> {
         }
         assets.push((PathBuf::from(name), read_asset(&root, Path::new(name))?));
     }
+    Ok(assets)
+}
+
+fn validate(root: &Path) -> Result<Assets> {
+    let mut assets = validate_source(root)?;
+    assets.extend(raster::validate(root)?);
     Ok(assets)
 }
 
@@ -277,7 +293,7 @@ mod tests {
     #[test]
     fn approved_assets_validate() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
-        assert_eq!(validate(root).unwrap().len(), 9);
+        assert_eq!(validate(root).unwrap().len(), 20);
     }
 
     #[test]

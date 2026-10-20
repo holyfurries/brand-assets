@@ -72,18 +72,27 @@
               }
             );
           };
-          devshells.default.packages = with pkgs; [
-            rust_toolchain
-            stdenv.cc
-            miniserve
-            ripgrep
-            nixfmt
-            libxml2
-            superhtml
-            biome
-            mdformat
-            python3Packages.mdformat-gfm
+          devshells.default.env = [
+            {
+              name = "FONTCONFIG_FILE";
+              value = pkgs.makeFontsConf { fontDirectories = [ pkgs.liberation_ttf ]; };
+            }
           ];
+          devshells.default.packages =
+            with pkgs;
+            [
+              rust_toolchain
+              stdenv.cc
+              miniserve
+              ripgrep
+              nixfmt
+              libxml2
+              superhtml
+              biome
+              mdformat
+              python3Packages.mdformat-gfm
+            ]
+            ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.chromium ];
           formatter = pkgs.nixfmt;
         };
     };

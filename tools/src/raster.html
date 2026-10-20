@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Shared splash frame export</title>
+	</head>
+	<body>
+		<div id="artwork">__SOURCE__</div>
+		<pre id="frames"></pre>
+		<script>
+			async function bake() {
+				const settings = __SETTINGS__;
+				const source = document.querySelector("svg");
+				source.setAttribute("width", settings.frame_size[0]);
+				source.setAttribute("height", settings.frame_size[1]);
+				await document.fonts.ready;
+				const animations = document.getAnimations();
+				if (animations.length !== settings.animation_count) {
+					throw new Error("Unexpected animation count");
+				}
+				for (const animation of animations) animation.pause();
+				const canvas = document.createElement("canvas");
+				canvas.width = settings.frame_size[0] * settings.columns;
+				canvas.height = settings.frame_size[1] * settings.rows;
+				const context = canvas.getContext("2d");
+				const background = getComputedStyle(document.documentElement).backgroundColor;
+				const probe = document.createElement("canvas").getContext("2d");
+				probe.fillStyle = background;
+				probe.fillRect(0, 0, 1, 1);
+				const background_rgba = Array.from(probe.getImageData(0, 0, 1, 1).data);
+				const pages = [];
+				const frames_per_page = settings.columns * settings.rows;
+				for (let frame = 0; frame < settings.frame_count; frame++) {
+					const cell = frame % frames_per_page;
+					if (cell === 0) {
+						context.fillStyle = background;
+						context.fillRect(0, 0, canvas.width, canvas.height);
+					}
+					for (const animation of animations) animation.currentTime = frame * 1000 / settings.fps;
+					const snapshot = source.cloneNode(true);
+					const original_nodes = [source, ...source.querySelectorAll("*")];
+					const snapshot_nodes = [snapshot, ...snapshot.querySelectorAll("*")];
+					for (let index = 0; index < original_nodes.length; index++) {
+						const original = original_nodes[index];
+						const target = snapshot_nodes[index];
+						const computed = getComputedStyle(original);
+						for (const property of ["transform", "transform-origin", "transform-box", "visibility", "clip-path", "letter-spacing"]) {
+							target.style.setProperty(property, computed.getPropertyValue(property));
+						}
+						target.style.animation = "none";
+					}
+					for (const stylesheet of snapshot.querySelectorAll("style")) stylesheet.remove();
+					const blob = new Blob([new XMLSerializer().serializeToString(snapshot)], { type: "image/svg+xml" });
+					const url = URL.createObjectURL(blob);
+					try {
+						const image = new Image();
+						image.src = url;
+						await image.decode();
+						context.drawImage(image, cell % settings.columns * settings.frame_size[0], Math.floor(cell / settings.columns) * settings.frame_size[1]);
+						} finally {
+							URL.revokeObjectURL(url);
+						}
+						if (cell === frames_per_page - 1 || frame === settings.frame_count - 1) {
+							pages.push(canvas.toDataURL("image/png").split(",")[1]);
+						}
+					}
+					return { pages, background_rgba };
+				}
+				bake().then(
+				result => document.getElementById("frames").textContent = JSON.stringify(result),
+				error => document.getElementById("frames").textContent = JSON.stringify({ error: String(error) }),
+				);
+		</script>
+	</body>
+</html>
