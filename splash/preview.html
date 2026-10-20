@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Studio splash | Holy Furries Studio</title>
+		<style>
+			:root {
+				color-scheme: dark;
+				background: oklch(28.3468% 0.01742 141.66);
+				color: oklch(95.4987% 0.01238 91.519);
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			body {
+				margin: 0;
+				min-block-size: 100svh;
+				display: grid;
+				place-items: center;
+			}
+			object {
+				display: block;
+				inline-size: min(85vw, clamp(18rem, 42vmin, 30rem));
+				block-size: auto;
+				aspect-ratio: 6 / 5;
+			}
+			button {
+				position: fixed;
+				inset-inline-end: 1rem;
+				inset-block-end: 1rem;
+				padding: 0.625em 1em;
+				border: 0.0625rem solid currentColor;
+				border-radius: 0.25rem;
+				color: inherit;
+				background: transparent;
+				font: inherit;
+				font-size: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+				cursor: pointer;
+			}
+			button:focus-visible {
+				outline: 0.125rem solid currentColor;
+				outline-offset: 0.25rem;
+			}
+			.skip { inset-inline-end: 10rem; }
+		</style>
+	</head>
+	<body>
+		<object data="source.svg?v=4" type="image/svg+xml" aria-label="Holy Furries Studio splash" onload="prepare_splash(this)">Holy Furries Studio</object>
+		<button class="skip" type="button" onclick="finish_splash()">Skip</button>
+		<button type="button" onclick="replay_splash()">Replay splash</button>
+		<script>
+			function replay_splash() {
+				const splash = document.querySelector('object');
+				const replay = splash.cloneNode();
+				replay.data = `source.svg?replay=${Date.now()}`;
+				splash.replaceWith(replay);
+			}
+			function finish_splash() {
+				const artwork = document.querySelector('object').contentDocument;
+				if (artwork) {
+					for (const animation of artwork.getAnimations()) {
+						animation.finish();
+					}
+				}
+			}
+			function skip_with_key(event) {
+				if (event.key === ' ' && event.target.closest?.('button')) {
+					return;
+				}
+				if (event.key === 'Escape' || event.key === ' ') {
+					event.preventDefault();
+					finish_splash();
+				}
+			}
+			function prepare_splash(splash) {
+				const artwork = splash.contentDocument;
+				if (artwork) {
+					artwork.addEventListener('pointerdown', finish_splash);
+					artwork.addEventListener('keydown', skip_with_key);
+				}
+			}
+			document.addEventListener('keydown', skip_with_key);
+		</script>
+	</body>
+</html>

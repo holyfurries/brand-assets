@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 400" role="img" aria-labelledby="title description">
+    <title id="title">Holy Furries Studio</title>
+    <desc id="description">A red fox with a crooked halo above the Holy Furries Studio wordmark.</desc>
+    <g transform="translate(140 40)" fill="none" stroke="oklch(59.3787% 0.19001 30.842)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="104" cy="27" rx="43" ry="12" transform="rotate(-12 104 27)"/>
+        <path fill="oklch(59.3787% 0.19001 30.842)" d="M31 56 82 86 119 86 171 53 157 125 101 177 45 126Z"/>
+        <path stroke="oklch(95.4987% 0.01238 91.519)" d="m54 81 6 27 20-7m67-23-7 29-18-6M64 127l22 8m49-9-21 9"/>
+        <path fill="oklch(95.4987% 0.01238 91.519)" stroke="oklch(95.4987% 0.01238 91.519)" d="m92 151 9 8 9-8Z"/>
+    </g>
+    <g fill="oklch(95.4987% 0.01238 91.519)" text-anchor="middle">
+        <text x="240" y="293" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" letter-spacing="-2.76">holy furries</text>
+        <text x="242.5" y="334" font-family="Courier New, monospace" font-size="14" letter-spacing="5">STUDIO</text>
+    </g>
+</svg>
