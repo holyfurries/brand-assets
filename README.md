@@ -11,7 +11,7 @@ Spice CAD.
 - `splash/manifest.json`: paths relative to the repository root, canvas size,
   background, and animation durations. All animations start at time zero.
 - `splash/frames/`: shared 60 fps PNG atlas pages and their playback manifest.
-- `logos/`: fox-and-halo mark and favicon.
+- `logos/`: fox-and-halo mark, favicon, and square avatar source/export.
 - `tools/`: Rust validation and bundle export CLI.
 
 ## Preview
@@ -35,8 +35,8 @@ Web applications can embed `source.svg` in an SVG-capable browser context. The
 preview demonstrates replay and skip handling. Native applications and game
 engines should use the baked PNG atlases. These contain the browser-rendered
 animation, including its easing, clipping, and lettering. No SVG interpreter,
-video codec, or independent recreation of keyframes is needed at runtime.
-Use `poster.png` as the static or reduced-motion fallback.
+video codec, or independent recreation of keyframes is needed at runtime. Use
+`poster.png` as the static or reduced-motion fallback.
 
 Center the artwork, preserve its aspect ratio, and fill the window with the
 manifest's background color. Allow skipping by keyboard, mouse, or controller.
@@ -59,6 +59,17 @@ poster in Spice CAD; other native applications should provide an equivalent
 setting. The browser preview follows the system reduced-motion preference.
 
 ## Validate and export
+
+Use `logos/avatar.png` for GitHub and other profile pictures. It is a 512 by 512
+opaque PNG with a cream background and padding for circular crops.
+`logos/avatar.svg` is its editable source, using the approved fox mark. Both
+files are included in bundle exports; validation checks the PNG size.
+
+To regenerate the avatar after editing its source:
+
+```console
+nix develop --command chromium --headless --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=512,512 --screenshot=logos/avatar.png "file://$PWD/logos/avatar.svg"
+```
 
 From this repository:
 
@@ -83,8 +94,8 @@ nix develop --command cargo run --locked -- bake output
 
 Review `output/`, then replace `splash/frames/` with that directory and run the
 validation commands above. The development shell pins Chromium and supplies
-Liberation fonts. `CHROMIUM` can override the executable outside that shell.
-The baker samples paused browser animations at exact timestamps, flattens the
+Liberation fonts. `CHROMIUM` can override the executable outside that shell. The
+baker samples paused browser animations at exact timestamps, flattens the
 computed transforms and clipping, and paints the atlas pages. It refuses an
 existing destination, bounds rendering to 120 seconds, and removes incomplete
 output after failure. Browser dependencies are for asset generation only;
@@ -96,7 +107,7 @@ animation in Firefox and Chromium before publishing changes.
 ## Rights
 
 Brand assets remain reserved to Holy Furries Studio; see `LICENSE`. The Rust
-utility is MIT licensed separately under `tools/LICENSE`.
-The asset terms permit building, running, and redistributing studio software
-and its forks, as well as sharing screenshots. Unofficial builds must identify
-themselves as such. The utility's MIT license grants no additional asset rights.
+utility is MIT licensed separately under `tools/LICENSE`. The asset terms permit
+building, running, and redistributing studio software and its forks, as well as
+sharing screenshots. Unofficial builds must identify themselves as such. The
+utility's MIT license grants no additional asset rights.

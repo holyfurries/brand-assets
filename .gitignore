@@ -19,6 +19,7 @@
 !/splash/frames/*.png
 !/splash/frames/*.json
 !/logos/*.svg
+!/logos/*.png
 
 /target/
 /output/

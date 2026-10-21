@@ -8,7 +8,7 @@
     "poster": "splash/poster.svg",
     "fallback": "splash/poster.png",
     "fallback_size": [1536, 1280],
-    "logos": ["logos/mark.svg", "logos/favicon.svg"],
+    "logos": ["logos/mark.svg", "logos/favicon.svg", "logos/avatar.svg"],
     "animations": [
         { "selector": "fox", "name": "appear", "duration_ms": 255 },
         { "selector": "face", "name": "face", "duration_ms": 675 },

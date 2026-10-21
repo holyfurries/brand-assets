@@ -140,6 +140,10 @@ fn validate_source(root: &Path) -> Result<Assets> {
     }
     let fallback = read_asset(&root, Path::new(&manifest.fallback))?;
     validate_png(&fallback, manifest.fallback_size)?;
+    validate_png(
+        &read_asset(&root, Path::new("logos/avatar.png"))?,
+        [512, 512],
+    )?;
     for logo in &manifest.logos {
         let bytes = read_asset(&root, Path::new(logo))?;
         validate_svg(std::str::from_utf8(&bytes)?, None)?;
@@ -149,6 +153,7 @@ fn validate_source(root: &Path) -> Result<Assets> {
         "splash/preview.html",
         "LICENSE",
         "README.md",
+        "logos/avatar.png",
         &manifest.source,
         &manifest.poster,
         &manifest.fallback,
@@ -293,7 +298,13 @@ mod tests {
     #[test]
     fn approved_assets_validate() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
-        assert_eq!(validate(root).unwrap().len(), 20);
+        let assets = validate(root).unwrap();
+        assert_eq!(assets.len(), 22);
+        assert!(
+            assets
+                .iter()
+                .any(|(path, _)| path == Path::new("logos/avatar.png"))
+        );
     }
 
     #[test]
