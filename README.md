@@ -97,3 +97,6 @@ animation in Firefox and Chromium before publishing changes.
 
 Brand assets remain reserved to Holy Furries Studio; see `LICENSE`. The Rust
 utility is MIT licensed separately under `tools/LICENSE`.
+The asset terms permit building, running, and redistributing studio software
+and its forks, as well as sharing screenshots. Unofficial builds must identify
+themselves as such. The utility's MIT license grants no additional asset rights.
